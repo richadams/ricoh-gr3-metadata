@@ -3,7 +3,7 @@
 _My attempts at figuring out how to get settings from the Ricoh GR III's vendor-specific EXIF metadata; image control settings, crop modes, etc. None of this should be considered authoritative, these are essentially just research notes, but I figured they might be helpful to others._
 
 > [!NOTE]
-> Tested only with a Ricoh GR III on firmware v2.10. These were derived by changing camera settings and comparing the data on my camera. I have no idea if it's the same for the GR IIIx or any other flavours of GR camera (or even if it's specific to just my camera), so further experimentation may be required for your own.
+> Tested only with a Ricoh GR III on firmware v2.10. These were derived by changing camera settings and comparing the metadata. I have no idea if it's the same for the GR IIIx or any other flavours of GR camera (or even if it's specific to just my camera), so further experimentation may be required for your own.
 
 
 ## tl;dr
@@ -72,7 +72,7 @@ If you don't want the configuration to always be used with `exiftool`, you can s
 
 ## Mapping GR III Image Control Metadata Fields
 
-While `exiftool` already pulls _some_ values out, they tend to not be as useful as the raw numbers. Does `Saturation: High` mean `+1`, `+2`, `+3`, or `+4`?, etc. I want the raw numbers.
+While `exiftool` already pulls _some_ values out, they tend to not be as useful as the raw numbers. Does `Saturation: High` mean `+1`, `+2`, `+3`, or `+4`?, etc. I want the raw numbers. But there are also lots of Ricoh-specific image control settings that don't seem to be available at all. I would like those too.
 
 I took photos cycling through all the settings, then compared the metadata bytes to see where the changes are stored.
 
@@ -132,7 +132,7 @@ A custom config can get `exiftool` to create new composite tags for each of them
 )
 ```
 
-For the ones that require lookups, here are the mappings I was able to figure out.
+Here are the mappings I was able to figure out.
 
 #### Standard Image Control Settings
 
@@ -158,7 +158,7 @@ There are 3 settings which only show up in B&W/Monotone modes. Unlike the normal
 
 ##### B&W Filter Effect
 
-This one is 4-bytes and not the normal signed integers. I'm guessing the bytes refer to what the filters do in some way?
+This one is 4-bytes and not the normal signed integers. I'm guessing the bytes refer to what the filters do in some way? I wasn't able to figure out anything other than the fact these exact values corresponded to the specific camera setting.
 
 ```text
 08000000 = N/A (i.e. camera isn't in a B&W/Monotone mode)
@@ -194,7 +194,7 @@ This only shows up in the "Cross Processing 2" image control mode. It's called "
  3 = Yellow
 ```
 
-#### HDR Tone
+#### HDR Tone Specific Settings
 
 These 2 settings are only available in the "HDR Tone" mode. All the normal saturation/contrast-style settings also become unavailable in this mode.
 
@@ -214,7 +214,7 @@ These 2 settings are only available in the "HDR Tone" mode. All the normal satur
 3 = High
 ```
 
-### Extra Credit - Recipes
+### Bonus - Recipes
 
 With all of the image control settings now available in `exiftool`, you can also add configurations for your recipes and have them appear as a new tag.
 
@@ -255,6 +255,46 @@ GR3 Recipe : Reggie's Color Negative
 
 I use this to document all of my recipes and have it show up in my photo management tools. Very convenient when I'm struggling to remember what settings I used and whether it was part of a recipe or just some ad-hoc experimentation.
 
+### Bonus - Testing Methodology
+
+For those interested in the exact technique I used to figure out which byte was which. I took a photo and then used the in-camera RAW developer to re-process it with all of the various settings. By diffing the output I found that `Pentax_0x0247` was the changing field. I dumped the `Pentax_0x0247` bytes using my custom field and compared them to see which values changed.
+
+```bash
+exiftool -b -GR3ImageControlData <FILE> | xxd -p -c 44
+```
+
+Rather than going through _literally_ every single possibility, I only needed to ensure each value was unique in some way and would allow me to fully isolate it. For example, for the main settings I ended up with 5 photos, A-E with these settings.
+
+```text
+             A   B   C   D   E
+Saturation  -4  -2   0  +2  +4
+Hue         -3  +1  +4  -1  +2
+High/Low    -2  +3  -1  +4   0
+Contrast    -1  +4  +2   0  -3
+Highlight    0  -3  +1  +4  -2
+Shadow      +1  -4  +3  -2   0
+Sharpness   +2   0  -4  +3  -1
+Shading     +3  -1  -2  +1  -4
+Clarity     +4  +2  -3  -4  +1
+```
+
+Then comparing the bytes to figure out which was which and what the values meant. Because each one follows a specific pattern, it made them easier to isolate.
+
+```bash
+for f in A.JPG B.JPG C.JPG D.JPG E.JPG; do
+  printf '%s: ' "$f"
+  exiftool -b -GR3ImageControlData "$f" | xxd -p -c 44
+done
+
+A.JPG: fcfffdfffeffffff0000010002000080008003000400ffffffffffffffffffffffff0800000008000000ffff
+B.JPG: feff010003000400fdfffcff000000800080ffff0200ffffffffffffffffffffffff0800000008000000ffff
+C.JPG: 00000400ffff020001000300fcff00800080fefffdffffffffffffffffffffffffff0800000008000000ffff
+D.JPG: 0200ffff040000000400feff0300008000800100fcffffffffffffffffffffffffff0800000008000000ffff
+E.JPG: 040002000000fdfffeff0000ffff00800080fcff0100ffffffffffffffffffffffff0800000008000000ffff
+```
+
+I repeated this same idea for the settings that are specific to the B&W/Monotone modes, as well as the "Cross Processing" and "HDR Tone" ones. I think I ended up with about 30-40 photos overall, since I had to repeat some when I'd noted down the wrong values and couldn't figure out why nothing matched up properly.
+
 ---
 
 ## Uncropping a Ricoh GR III DNG
@@ -275,12 +315,11 @@ Unfortunately that doesn't work for in-camera processing. I'm lazy and wanted to
 
 ### Pentax 0x0098 - Data Structure
 
-It seems to be 3 unsigned 8-bit integers, where the 2nd byte is the only one that changes.
+It seems to be 3 unsigned 8-bit integers, where the 2nd byte is the only one that actually changes.
 
 * `0 0 0` = L (28mm)
 * `0 5 0` = M (35mm)
 * `0 6 0` = S (50mm)
-
 
 A custom `exiftool` configuration allows me to access the field and write to it. See my full [ExifTool_config](ExifTool_config) file if you want the entire thing, but if you only care about the crop mode you can save this as `gr3.config` or something and then reference it directly when using `exiftool`.
 
@@ -323,7 +362,7 @@ After running the above, rename the file then add it back to your camera SD card
 > [!NOTE]
 > When browsing the photo in-camera, it'll still only show the cropped version since it's using the embedded thumbnail and we didn't touch that. Once you enter RAW development mode it'll show the full uncropped image ready for processing.
 
-### Extra Credit - Human Readable Crop Mode Value
+### Bonus - Human Readable Crop Mode Value
 
 If you want to get fancy, you can use this configuration to also show a human readable version of the value. That's what I've done in my larger [`exiftool` configuration](ExifTool_config).
 
@@ -358,3 +397,7 @@ GR3 Crop Mode Name: L (28mm)
 ```
 
 I find that easier when I don't want to have to remember which mode `0 5 0` was.
+
+---
+
+_It is worth noting that I have absolutely no idea what I'm doing when it comes to ExifTool configuration files. I used the tried and true method of copy/pasting from documentation, changing some values, fixing any errors that showed up, and hoping for the best. If you know what you are doing, don't hesitate to explain what I did wrong so I can learn._
