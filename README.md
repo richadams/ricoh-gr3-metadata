@@ -317,6 +317,8 @@ E.JPG: 040002000000fdfffeff0000ffff00800080fcff0100ffffffffffffffffffffffff08000
 
 I repeated this same idea for the settings that are specific to the B&W/Monotone modes, as well as the "Cross Processing" and "HDR Tone" ones. I think I ended up with about 30-40 photos overall, since I had to repeat some when I'd noted down the wrong values and couldn't figure out why nothing matched up properly.
 
+I've added my [raw test data](TEST_DATA.md) for those who want it.
+
 ---
 
 ## Uncropping a Ricoh GR III DNG
