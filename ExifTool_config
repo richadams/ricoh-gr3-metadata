@@ -66,7 +66,7 @@
         # None of these are available for "HDR Tone".
         GR3Saturation => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 0, 2));
                 return 'N/A' if $v == -32768;
@@ -75,7 +75,7 @@
         },
         GR3Hue => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 2, 2));
                 return 'N/A' if $v == -32768;
@@ -84,7 +84,7 @@
         },
         GR3HighLowKey => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 4, 2));
                 return 'N/A' if $v == -32768;
@@ -93,7 +93,7 @@
         },
         GR3Contrast => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 6, 2));
                 return 'N/A' if $v == -32768;
@@ -102,7 +102,7 @@
         },
         GR3ContrastHighlight => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 8, 2));
                 return 'N/A' if $v == -32768;
@@ -111,7 +111,7 @@
         },
         GR3ContrastShadow => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 10, 2));
                 return 'N/A' if $v == -32768;
@@ -120,7 +120,7 @@
         },
         GR3Sharpness => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 12, 2));
                 return 'N/A' if $v == -32768;
@@ -129,7 +129,7 @@
         },
         GR3Shading => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 18, 2));
                 return 'N/A' if $v == -32768;
@@ -138,7 +138,7 @@
         },
         GR3Clarity => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 20, 2));
                 return 'N/A' if $v == -32768;
@@ -149,7 +149,7 @@
         # These ones are only used for BW/Monotone modes.
         GR3BWToning => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") =~ /Monotone|B&W/',
+            Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 26, 2));
                 return 'N/A'    if $v == -1;
@@ -164,7 +164,7 @@
         },
         GR3BWFilterEffect => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") =~ /Monotone|B&W/',
+            Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/',
             ValueConv => q{
                 my $v = substr($val, 34, 4);
                 return 'N/A' if $v eq pack('C4', 0x08, 0x00, 0x00, 0x00);
@@ -178,7 +178,7 @@
         },
         GR3BWGrainEffect => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") =~ /Monotone|B&W/',
+            Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 38, 2));
                 return 'N/A' if $v == 8;
@@ -193,7 +193,7 @@
         # This one is only used in "Cross Processing" mode.
         GR3CrossProcessingColorTone => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") eq "Cross Processing 2"',
+            Condition => '($self->GetValue("ImageTone") // "") eq "Cross Processing 2"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 42, 2));
                 return 'N/A'     if $v == -1;
@@ -207,7 +207,7 @@
         # And these ones are only in "HDR Tone" mode.
         GR3HDRToneToning => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") eq "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") eq "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 30, 2));
                 return 'Off' if $v == 0;
@@ -218,7 +218,7 @@
         },
         GR3HDRToneHDRToneLevel => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") eq "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") eq "HDR Tone"',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 32, 2));
                 return 'Low'    if $v == 1;
@@ -231,6 +231,7 @@
         # Identify custom recipes from the Image Tone and image control settings.
         GR3Recipe => {
             Require   => 'GR3ImageControlData',
+            Condition => '($self->GetValue("Model") // "") eq "RICOH GR III"',
             ValueConv => q{
                 # Using the image control data bytes directly rather than the
                 # above composites, since it's way less verbose this way.
