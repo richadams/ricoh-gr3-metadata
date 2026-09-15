@@ -5,6 +5,28 @@ _My attempts at figuring out how to get settings from the Ricoh GR III's vendor-
 > [!NOTE]
 > Tested only with a Ricoh GR III on firmware v2.10. These were derived by changing camera settings and comparing the metadata. I have no idea if it's the same for the GR IIIx or any other flavours of GR camera (or even if it's specific to just my camera), so further experimentation may be required for your own.
 
+## Table of Contents
+
+- [tl;dr](#tldr)
+- [Mapping GR III Image Control Metadata Fields](#mapping-gr-iii-image-control-metadata-fields)
+  - [Pentax 0x0247 - Data Structure](#pentax-0x0247---data-structure)
+  - [Standard Image Control Settings](#standard-image-control-settings)
+  - [B&W / Monotone Specific Settings](#bw--monotone-specific-settings)
+    - [B&W Toning](#bw-toning)
+    - [B&W Filter Effect](#bw-filter-effect)
+    - [B&W Grain Effect](#bw-grain-effect)
+  - [Cross Processing Specific Settings](#cross-processing-specific-settings)
+    - [Color Tone](#color-tone)
+  - [HDR Tone Specific Settings](#hdr-tone-specific-settings)
+    - [Toning](#toning)
+    - [HDR Tone Level](#hdr-tone-level)
+  - [Bonus - Recipes](#bonus---recipes)
+  - [Bonus - Testing Methodology](#bonus---testing-methodology)
+- [Uncropping a Ricoh GR III DNG](#uncropping-a-ricoh-gr-iii-dng)
+  - [Pentax 0x0098 - Data Structure](#pentax-0x0098---data-structure)
+  - [Bonus - Human Readable Crop Mode Value](#bonus---human-readable-crop-mode-value)
+
+---
 
 ## tl;dr
 
