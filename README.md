@@ -15,10 +15,12 @@ _My attempts at figuring out how to get settings from the Ricoh GR III's vendor-
     - [B&W Toning](#bw-toning)
     - [B&W Filter Effect](#bw-filter-effect)
     - [B&W Grain Effect](#bw-grain-effect)
+  - [Bleach Bypass Specific Settings](#bleach-bypass-specific-settings)
+    - [Toning](#toning)
   - [Cross Processing Specific Settings](#cross-processing-specific-settings)
     - [Color Tone](#color-tone)
   - [HDR Tone Specific Settings](#hdr-tone-specific-settings)
-    - [Toning](#toning)
+    - [Toning](#toning-1)
     - [HDR Tone Level](#hdr-tone-level)
   - [Bonus - Recipes](#bonus---recipes)
   - [Bonus - Testing Methodology](#bonus---testing-methodology)
@@ -55,6 +57,7 @@ exiftool \
   -GR3BWToning \
   -GR3BWFilterEffect \
   -GR3BWGrainEffect \
+  -GR3BleachBypassToning \
   -GR3CrossProcessingColorTone \
   -GR3HDRToneToning \
   -GR3HDRToneHDRToneLevel \
@@ -118,7 +121,7 @@ Offset   Size   Field                         Encoding
 20       2      Clarity                       int16s LE
 22       4      !! Unknown                    -
 26       2      BW Toning                     int16s LE
-28       2      !! Unknown                    -
+28       2      Bleach Bypass Toning          int16s LE
 30       2      HDR Tone Toning               int16s LE
 32       2      HDR Tone Level                int16s LE
 34       4      BW Filter Effect              4 raw bytes
@@ -201,6 +204,21 @@ This one seems to be in reverse order, and odd numbers only, except for the `N/A
 3 = 2
 5 = 1
 8 = N/A (i.e. camera isn't in a B&W/Monotone mode)
+```
+
+#### Bleach Bypass Specific Settings
+
+##### Toning
+
+This only shows up in the "Bleach Bypass 2" image control mode. It's just called "Bleach Bypass" on my camera though.
+
+The values on the camera are "C" and "W" with coloured dots showing blue and red, so presumably the values mean "Cold" and "Warm".
+
+```text
+-1 = N/A (i.e. camera isn't in Bleach Bypass mode)
+ 0 = Off
+ 1 = C
+ 2 = W
 ```
 
 #### Cross Processing Specific Settings

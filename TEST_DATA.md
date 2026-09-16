@@ -69,6 +69,19 @@ Filter       3
 3.JPG: 008000800100feff00000000ffff008000800000fdffffffffff0000ffffffffffff415a140a00000000ffff
 ```
 
+### Bleach Bypass Settings
+
+```text
+             A    B    C
+Toning       Off  C    W
+```
+
+```text
+A.JPG: 00000000040004000400000000000080008000000000ffffffffffff0000ffffffff0800000008000000ffff
+B.JPG: 00000000040004000400000000000080008000000000ffffffffffff0100ffffffff0800000008000000ffff
+C.JPG: 00000000040004000400000000000080008000000000ffffffffffff0200ffffffff0800000008000000ffff
+```
+
 ### Cross Processing Settings
 
 ```text
