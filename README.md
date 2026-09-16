@@ -17,11 +17,13 @@ _My attempts at figuring out how to get settings from the Ricoh GR III's vendor-
     - [B&W Grain Effect](#bw-grain-effect)
   - [Bleach Bypass Specific Settings](#bleach-bypass-specific-settings)
     - [Toning](#toning)
+  - [Retro Specific Settings](#retro-specific-settings)
+    - [Toning](#toning-1)
+  - [HDR Tone Specific Settings](#hdr-tone-specific-settings)
+    - [Toning](#toning-2)
+    - [HDR Tone Level](#hdr-tone-level)
   - [Cross Processing Specific Settings](#cross-processing-specific-settings)
     - [Color Tone](#color-tone)
-  - [HDR Tone Specific Settings](#hdr-tone-specific-settings)
-    - [Toning](#toning-1)
-    - [HDR Tone Level](#hdr-tone-level)
   - [Bonus - Recipes](#bonus---recipes)
   - [Bonus - Testing Methodology](#bonus---testing-methodology)
 - [Uncropping a Ricoh GR III DNG](#uncropping-a-ricoh-gr-iii-dng)
@@ -58,6 +60,7 @@ exiftool \
   -GR3BWFilterEffect \
   -GR3BWGrainEffect \
   -GR3BleachBypassToning \
+  -GR3RetroToning \
   -GR3CrossProcessingColorTone \
   -GR3HDRToneToning \
   -GR3HDRToneHDRToneLevel \
@@ -116,7 +119,8 @@ Offset   Size   Field                         Encoding
 8        2      Contrast Highlight            int16s LE
 10       2      Contrast Shadow               int16s LE
 12       2      Sharpness                     int16s LE
-14       4      !! Unknown                    -
+14       2      !! Unknown                    -
+16       2      Retro Toning                  int16s LE
 18       2      Shading                       int16s LE
 20       2      Clarity                       int16s LE
 22       4      !! Unknown                    -
@@ -194,6 +198,8 @@ This one is 4-bytes and not the normal signed integers. I'm guessing the bytes r
 61780a0a = 4
 ```
 
+Update: I later played about with [decompiling the firmware](https://github.com/hhornbacher/gr3x-fw-hack), and found strings in `mtpd` related to `FilterEffectR`, `FilterEffectG`, and `FilterEffectB`. So I strongly suspect 3 of the bytes here correspond in some way to the RGB values of the underlying filter.
+
 ##### B&W Grain Effect
 
 This one seems to be in reverse order, and odd numbers only, except for the `N/A` value which is `8` instead of `-1` like it is for others.
@@ -221,18 +227,11 @@ The values on the camera are "C" and "W" with coloured dots showing blue and red
  2 = W
 ```
 
-#### Cross Processing Specific Settings
+#### Retro Specific Settings
 
-##### Color Tone
+##### Toning
 
-This only shows up in the "Cross Processing 2" image control mode. It's called "Cross Processing" on my camera, but `exiftool -ImageTone` shows it as "Cross Processing 2".
-
-```text
--1 = N/A (i.e. camera isn't in the "Cross Processing 2" mode)
- 1 = Blue
- 2 = Magenta
- 3 = Yellow
-```
+This only shows up in the "Retro" mode, and is a normal -4 to +4 value range like Saturation, Contrast, etc. It maps directly to what the camera already displays.
 
 #### HDR Tone Specific Settings
 
@@ -252,6 +251,19 @@ These 2 settings are only available in the "HDR Tone" mode. All the normal satur
 1 = Low
 2 = Med
 3 = High
+```
+
+#### Cross Processing Specific Settings
+
+##### Color Tone
+
+This only shows up in the "Cross Processing 2" image control mode. It's called "Cross Processing" on my camera, but `exiftool -ImageTone` shows it as "Cross Processing 2".
+
+```text
+-1 = N/A (i.e. camera isn't in the "Cross Processing 2" mode)
+ 1 = Blue
+ 2 = Magenta
+ 3 = Yellow
 ```
 
 ### Bonus - Recipes

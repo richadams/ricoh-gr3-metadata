@@ -204,17 +204,14 @@
             },
         },
 
-        # This one is only used in "Cross Processing" mode.
-        GR3CrossProcessingColorTone => {
+        # This is only used in "Retro" mode.
+        GR3RetroToning => {
             Require   => 'GR3ImageControlData',
-            Condition => '($self->GetValue("ImageTone") // "") eq "Cross Processing 2"',
+            Condition => '$self->GetValue("ImageTone") eq "Retro"',
             ValueConv => q{
-                my $v = unpack('s<', substr($val, 42, 2));
-                return 'N/A'     if $v == -1;
-                return 'Blue'    if $v == 1;
-                return 'Magenta' if $v == 2;
-                return 'Yellow'  if $v == 3;
-                return "Unknown ($v)";
+                my $v = unpack('s<', substr($val, 16, 2));
+                return 'N/A' if $v == -32768;
+                return $v;
             },
         },
 
@@ -238,6 +235,20 @@
                 return 'Low'    if $v == 1;
                 return 'Med'    if $v == 2;
                 return 'High'   if $v == 3;
+                return "Unknown ($v)";
+            },
+        },
+
+        # This one is only used in "Cross Processing" mode.
+        GR3CrossProcessingColorTone => {
+            Require   => 'GR3ImageControlData',
+            Condition => '($self->GetValue("ImageTone") // "") =~ /Cross Processing/',
+            ValueConv => q{
+                my $v = unpack('s<', substr($val, 42, 2));
+                return 'N/A'     if $v == -1;
+                return 'Blue'    if $v == 1;
+                return 'Magenta' if $v == 2;
+                return 'Yellow'  if $v == 3;
                 return "Unknown ($v)";
             },
         },
