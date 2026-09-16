@@ -154,7 +154,7 @@
                 my $v = unpack('s<', substr($val, 26, 2));
                 return 'N/A'    if $v == -1;
                 return 'Off'    if $v == 0;
-                return 'Brown'  if $v == 1;
+                return 'Sepia'  if $v == 1;
                 return 'Red'    if $v == 2;
                 return 'Green'  if $v == 3;
                 return 'Blue'   if $v == 4;

@@ -28,10 +28,10 @@ E.JPG: 040002000000fdfffeff0000ffff00800080fcff0100ffffffffffffffffffffffff08000
 ### B&W / Monotone Settings
 
 ```text
-                    A     B     C     D     E     F
-Toning              Off   Brown Red   Purple Green Blue
-Filter Effect       Off   1    2     4     Off   Off
-Grain Effect        Off   1    2     3     Off   Off
+                    A     B     C     D      E     F
+Toning              Off   Sepia Red   Purple Green Blue
+Filter Effect       Off   1     2     4      Off   Off
+Grain Effect        Off   1     2     3      Off   Off
 ```
 
 ```text

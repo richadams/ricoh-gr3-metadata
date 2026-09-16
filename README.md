@@ -171,7 +171,7 @@ There are 3 settings which only show up in B&W/Monotone modes. Unlike the normal
 ```text
 -1 = N/A (i.e. camera isn't in a B&W/Monotone mode)
  0 = Off
- 1 = Brown
+ 1 = Sepia
  2 = Red
  3 = Green
  4 = Blue
