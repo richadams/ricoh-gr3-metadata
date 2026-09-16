@@ -72,7 +72,7 @@ Here are the mappings I've been able to figure out:
 
 All the normal settings such as Saturation, Contrast, Sharpness, etc. are just signed integers that exactly match what the camera menu already shows. `-2` = `-2`, `+3` = `+3`, etc.
 
-One exception is `-32768` for when the value isn't used, such as in "HDR Tone" mode, since the settings are unavailable.
+One exception is `-32768` for when the value isn't used, such as in "HDR Tone" mode, since many of the settings are unavailable.
 
 ### B&W / Monotone Specific Settings
 
@@ -91,6 +91,8 @@ There are 3 settings which only show up in B&W/Monotone modes. Unlike the normal
 ```
 
 #### B&W Filter Effect
+
+This is not available in "Hard BW" mode for some reason, but is available in all the others.
 
 The values on the camera are "Off, 1, 2, 3, 4", but the entire section in the metadata is 4-bytes rather than just a single signed integer like the others.
 
@@ -313,6 +315,14 @@ E.JPG: 040002000000fdfffeff0000ffff00800080fcff0100ffffffffffffffffffffffff08000
 ```
 
 I repeated this same idea for the settings that are specific to the B&W/Monotone modes, as well as the "Cross Processing" and "HDR Tone" ones. I think I ended up with about 30-40 photos overall, since I had to repeat some when I'd noted down the wrong values and couldn't figure out why nothing matched up properly.
+
+### Settings Matrix
+
+Since I missed a few settings the first time around, I wanted to make sure I'd gotten all of them. I found a [post on the GR blog](https://www.grblog.jp/en/article/1976/) with a matrix of settings for the BW modes, but couldn't find anything for the rest of them. So I made one.
+
+![](ricoh_gr3_setting_matrix.png)
+
+These are all the possible Image Control settings I could find on my camera.
 
 ---
 

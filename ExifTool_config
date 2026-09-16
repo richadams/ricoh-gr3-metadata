@@ -63,10 +63,9 @@
         },
 
         # Image Control Settings
-        # None of these are available for "HDR Tone".
         GR3Saturation => {
             Require   => 'GR3ImageControlData',
-            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne ""',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 0, 2));
                 return 'N/A' if $v == -32768;
@@ -75,13 +74,14 @@
         },
         GR3Hue => {
             Require   => 'GR3ImageControlData',
-            Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
+            Condition => '($self->GetValue("ImageTone") // "") ne ""',
             ValueConv => q{
                 my $v = unpack('s<', substr($val, 2, 2));
                 return 'N/A' if $v == -32768;
                 return $v;
             },
         },
+        # None of the rest are available for "HDR Tone".
         GR3HighLowKey => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
@@ -162,9 +162,10 @@
                 return "Unknown ($v)";
             },
         },
+        # Note: This isn't available in "Hard BW" mode.
         GR3BWFilterEffect => {
             Require   => 'GR3ImageControlData',
-            Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/',
+            Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/ && ($self->GetValue("ImageTone") // "") !~ /^Hard/',
             ValueConv => q{
                 my $flags = unpack('C', substr($val, 34, 1));
                 my $r = unpack('C', substr($val, 35, 1));
