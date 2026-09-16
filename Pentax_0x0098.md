@@ -14,7 +14,7 @@
 
 ## Why?
 
-I wanted to [uncrop a Ricoh GR III DNG](Uncropping.md) so I could use the in-camera RAW developer. All other uncropping techniques I'd seen only allowed tools like Lightroom and Darktable to process the image, but not the in-camera RAW processing.
+I wanted to [uncrop a Ricoh GR III DNG](Uncropping.md) so I could use the in-camera RAW developer. All other uncropping techniques I'd seen only allowed tools like Lightroom and Darktable to process the image, but not the in-camera RAW developer.
 
 ## Data Structure
 

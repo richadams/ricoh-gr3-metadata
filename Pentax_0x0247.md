@@ -31,7 +31,7 @@ The `Pentax_0x0247` MakerNote field seems to be where the "Image Control" settin
 
 ## Why?
 
-While `exiftool` already pulls _some_ values out, they tend to be the generic EXIF tags rather than the vendor-specific ones. For example, while `Saturation: High` is accurate based on the generic `0xa409` tag, I don't know whether that corresponds to `+1`, `+2`, `+3`, or `+4` on the camera. I want the raw camera values. There are also lots of other Ricoh-specific image control settings that don't seem to be available at all and I would like those too.
+While `exiftool` already pulls out some image adjustment values, they are the generic EXIF tags rather than the vendor-specific ones. For example, while `Saturation: High` is accurate based on the generic `0xa409` tag, I don't know whether that corresponds to `+1`, `+2`, `+3`, or `+4` on the Ricoh GR III. I want the raw camera values. There are also lots of other Ricoh-specific image control settings that don't seem to be available at all and I would like those too.
 
 ## Data Structure
 
@@ -55,10 +55,10 @@ Offset   Size   Field                         Encoding
 28       2      Bleach Bypass Toning          int16s LE
 30       2      HDR Tone Toning               int16s LE
 32       2      HDR Tone Level                int16s LE
-34       1      BW Filter Effect Flags        uint8 (bitmask)
-35       1      BW Filter Effect R%           uint8
-36       1      BW Filter Effect G%           uint8
-37       1      BW Filter Effect B%           uint8
+34       1      BW Filter Effect Flags        int8u (bitmask)
+35       1      BW Filter Effect R%           int8u
+36       1      BW Filter Effect G%           int8u
+37       1      BW Filter Effect B%           int8u
 38       2      BW Grain Effect               int16s LE
 40       2      !! Unknown                    -
 42       2      Cross Processing Color Tone   int16s LE
@@ -92,7 +92,7 @@ There are 3 settings which only show up in B&W/Monotone modes. Unlike the normal
 
 #### B&W Filter Effect
 
-This is not available in "Hard BW" mode for some reason, but is available in all the others.
+This is not available in "Hard BW" mode for some reason, but is available in all the other BW/Monotone modes.
 
 The values on the camera are "Off, 1, 2, 3, 4", but the entire section in the metadata is 4-bytes rather than just a single signed integer like the others.
 
@@ -318,11 +318,11 @@ I repeated this same idea for the settings that are specific to the B&W/Monotone
 
 ### Settings Matrix
 
-Since I missed a few settings the first time around, I wanted to make sure I'd gotten all of them. I found a [post on the GR blog](https://www.grblog.jp/en/article/1976/) with a matrix of settings for the BW modes, but couldn't find anything for the rest of them. So I made one.
+Since I missed a few settings the first time around, I wanted to make sure I'd gotten all of them. I found a [post on the GR blog](https://www.grblog.jp/en/article/1976/) with a matrix of settings for the BW modes, but couldn't find anything for the rest of them. So I made a new one covering all the different modes.
 
 ![](ricoh_gr3_setting_matrix.png)
 
-These are all the possible Image Control settings I could find on my camera.
+These are all the possible Image Control settings I could find on my GR III camera.
 
 ---
 

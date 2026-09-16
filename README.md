@@ -4,7 +4,7 @@ _My attempts at figuring out how to get settings from the Ricoh GR III's vendor-
 
 ---
 
-If you've ever wanted to get all of the image control settings from the metadata of a Ricoh GR III photo, the files and information here should hopefully get you just that.You can even identify the exact recipes used!
+If you've ever wanted to get all of the image control settings from the metadata of a Ricoh GR III photo, the files and information here should hopefully help.
 
 ## tl;dr
 
@@ -66,14 +66,14 @@ GR3 Clarity                     : 0
 GR3 Recipe                      : Reggie's Color Negative
 ```
 
-If you don't want the configuration to always be used with `exiftool`, you can save it as another file such as `~/.gr3.config` and then use `exiftool -config ~/.gr3.config` when you want to use it.
+If you don't want the configuration to always be used when running `exiftool` commands, you can save it as another file such as `~/.gr3.config` and then use `exiftool -config ~/.gr3.config` when you do want to use it.
 
 By having all of these fields available in `exiftool` they should also show up in any other software that uses it. For example, I have them shown in the Metadata sidebar in digiKam with a custom filter.
 
 > [!NOTE]
-> It is worth noting that I have absolutely no idea what I'm doing when it comes to ExifTool configuration files. I used the tried and true method of copy/pasting from documentation, changing some values, fixing any errors that showed up, and hoping for the best. If you know what you are doing, don't hesitate to explain what I did wrong so I can learn.
+> It is worth noting that I have absolutely no idea what I'm doing when it comes to ExifTool configuration files. I used the tried and true method of copy/pasting from documentation, changing some values, fixing any errors that showed up, and hoping for the best. If you know what you are doing, don't hesitate to explain what I did wrong so I can learn. This is very much a "works on my machine" type of thing.
 
-## Recipes?
+## Recipes
 
 Recipes are a collection of "Image Control" settings that give your photos a specific look and feel. Great for when you don't want to deal with post-processing a RAW image and just want a JPEG that looks a certain way straight out of the camera.
 
@@ -83,4 +83,12 @@ See ["Bonus - Recipes"](Pentax_0x0247.md#bonus---recipes) for information on how
 
 ## Tell Me More
 
-If you want the gritty technical details, see my notes on the [`Pentax_0x0098`](Pentax_0x0098.md) and [`Pentax_0x0247`](Pentax_0x0247.md) fields.
+### Pentax_0x0098
+
+See [`Pentax_0x0098`](Pentax_0x0098.md). This field stores the "Crop Mode" and can be used to [uncrop a photo](Uncropping.md) to get the full image back if you accidentally shot at 35mm instead of 28mm, etc.
+
+### Pentax_0x0247
+
+See [`Pentax_0x0247`](Pentax_0x0247.md). This field stores all of the "Image Control" settings. Basically anything from the below settings matrix is encoded in this field.
+
+![](ricoh_gr3_setting_matrix.png)
