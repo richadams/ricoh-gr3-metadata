@@ -69,6 +69,25 @@ Filter       3
 3.JPG: 008000800100feff00000000ffff008000800000fdffffffffff0000ffffffffffff415a140a00000000ffff
 ```
 
+Update: I didn't notice "Filter Effect" has even more options! Pressing "Fn" brings up the ability to change R, G, and B values in the range from -200% to +200%. The presets are just specific RGB values. That's why they're multiple bytes. Here I cycle through some values for each to properly isolate them.
+
+```text
+         A       B        C        D        E        F        G
+R        0       +100     -100     0        0        0        0
+G        0       0        0        +100     -100     0        0
+B        0       0        0        0        0        +100     -100
+```
+
+```text
+A.JPG: 00800080000000000000000000000080008000000000ffffffff0000ffffffffffff0100000000000000ffff
+B.JPG: 00800080000000000000000000000080008000000000ffffffff0000ffffffffffff0164000000000000ffff
+C.JPG: 00800080000000000000000000000080008000000000ffffffff0000ffffffffffff1164000000000000ffff
+D.JPG: 00800080000000000000000000000080008000000000ffffffff0000ffffffffffff0100640000000000ffff
+E.JPG: 00800080000000000000000000000080008000000000ffffffff0000ffffffffffff2100640000000000ffff
+F.JPG: 00800080000000000000000000000080008000000000ffffffff0000ffffffffffff0100006400000000ffff
+G.JPG: 00800080000000000000000000000080008000000000ffffffff0000ffffffffffff4100006400000000ffff
+```
+
 ### Bleach Bypass Settings
 
 ```text

@@ -166,14 +166,26 @@
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/',
             ValueConv => q{
-                my $v = substr($val, 34, 4);
-                return 'N/A' if $v eq pack('C4', 0x08, 0x00, 0x00, 0x00);
-                return 'Off' if $v eq pack('C4', 0x00, 0x00, 0x00, 0x00);
-                return '1'   if $v eq pack('C4', 0x01, 0x0a, 0x46, 0x14);
-                return '2'   if $v eq pack('C4', 0x01, 0x28, 0x32, 0x0a);
-                return '3'   if $v eq pack('C4', 0x41, 0x5a, 0x14, 0x0a);
-                return '4'   if $v eq pack('C4', 0x61, 0x78, 0x0a, 0x0a);
-                return "Unknown ($v)";
+                my $flags = unpack('C', substr($val, 34, 1));
+                my $r = unpack('C', substr($val, 35, 1));
+                my $g = unpack('C', substr($val, 36, 1));
+                my $b = unpack('C', substr($val, 37, 1));
+
+                return 'Off' if $flags == 0x00;
+                return 'N/A' if $flags & 0x08;
+
+                $r = -$r if $flags & 0x10;
+                $g = -$g if $flags & 0x20;
+                $b = -$b if $flags & 0x40;
+
+                my $result = sprintf("On; R%+d%, G%+d%, B%+d%", $r, $g, $b);
+
+                $result .= ' (Preset 1)' if $r == 10  && $g == 70 && $b == 20;
+                $result .= ' (Preset 2)' if $r == 40  && $g == 50 && $b == 10;
+                $result .= ' (Preset 3)' if $r == 90  && $g == 20 && $b == -10;
+                $result .= ' (Preset 4)' if $r == 120 && $g == -10 && $b == -10;
+
+                return $result;
             },
         },
         GR3BWGrainEffect => {

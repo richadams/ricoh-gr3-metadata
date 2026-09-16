@@ -100,7 +100,7 @@ If you don't want the configuration to always be used with `exiftool`, you can s
 
 ## Mapping GR III Image Control Metadata Fields
 
-While `exiftool` already pulls _some_ values out, they tend to not be as useful as the raw numbers. Does `Saturation: High` mean `+1`, `+2`, `+3`, or `+4`?, etc. I want the raw numbers. But there are also lots of Ricoh-specific image control settings that don't seem to be available at all. I would like those too.
+While `exiftool` already pulls _some_ values out, they tend to be the generic EXIF tags rather than the vendor-specific ones. For example, while `Saturation: High` is accurate based on the generic `0xa409` tag, I don't know whether that corresponds to `+1`, `+2`, `+3`, or `+4` on the camera. I want the raw camera values. There are also lots of other Ricoh-specific image control settings that don't seem to be available at all. I would like those too.
 
 I took photos cycling through all the settings, then compared the metadata bytes to see where the changes are stored.
 
@@ -108,7 +108,7 @@ Here are some of my notes on the format. There are still some unknowns, and this
 
 ### Pentax 0x0247 - Data Structure
 
-The `Pentax_0x0247` MakerNote field seems to be a 44-byte blob where most of the image control settings are stored as signed 16-bit little-endian integers, with a few 4-byte values and some unknowns thrown in for good measure. Here are the fields I was able to identify:
+The `Pentax_0x0247` MakerNote field seems to be a 44-byte blob where most of the image control settings are stored as signed 16-bit little-endian integers, with a few unsigned values and some unknowns thrown in for good measure. Here are the fields I was able to identify so far:
 
 ```text
 Offset   Size   Field                         Encoding
@@ -128,7 +128,10 @@ Offset   Size   Field                         Encoding
 28       2      Bleach Bypass Toning          int16s LE
 30       2      HDR Tone Toning               int16s LE
 32       2      HDR Tone Level                int16s LE
-34       4      BW Filter Effect              4 raw bytes
+34       1      BW Filter Effect Flags        uint8 (bitmask)
+35       1      BW Filter Effect R%           uint8
+36       1      BW Filter Effect G%           uint8
+37       1      BW Filter Effect B%           uint8
 38       2      BW Grain Effect               int16s LE
 40       2      !! Unknown                    -
 42       2      Cross Processing Color Tone   int16s LE
@@ -187,18 +190,48 @@ There are 3 settings which only show up in B&W/Monotone modes. Unlike the normal
 
 ##### B&W Filter Effect
 
-This one is 4-bytes and not the normal signed integers. I'm guessing the bytes refer to what the filters do in some way? I wasn't able to figure out anything other than the fact these exact values corresponded to the specific camera setting.
+The values on the camera are "Off, 1, 2, 3, 4", but the entire section in the metadata is 4-bytes rather than just a single signed integer like the others.
+
+I later noticed the presets can be configured further by presing "Fn", allowing you to set specific R, G, and B percentages (from -200% to +200%). The presets are just specific combinations of those. The full 4-bytes encode all of this information.
+
+The first byte encodes whether the filter mode is off/on, and whether the RGB values are negative or not. Then the next 3 bytes are the values for R, G, and B respectively.
+
+###### Byte 1
+
+The first nibble encodes the sign for the RGB values are bitwise OR'd together.
 
 ```text
-08000000 = N/A (i.e. camera isn't in a B&W/Monotone mode)
-00000000 = Off
-010a4614 = 1
-0128320a = 2
-415a140a = 3
-61780a0a = 4
+0x10 = R negative
+0x20 = G negative
+0x40 = B negative
 ```
 
-Update: I later played about with [decompiling the firmware](https://github.com/hhornbacher/gr3x-fw-hack), and found strings in `mtpd` related to `FilterEffectR`, `FilterEffectG`, and `FilterEffectB`. So I strongly suspect 3 of the bytes here correspond in some way to the RGB values of the underlying filter.
+So a value of `0x60` would indicate that both G and B values are negative.
+
+The second nibble encodes whether the "Filter Effect" is off or on, or we're in a mode that doesn't support this setting.
+
+```text
+0x00 = Off
+0x01 = On
+0x08 = N/A (i.e. camera isn't in a B&W/Monotone mode)
+```
+
+So all together, a value of `0x61` would indicate the "Filter Effect" is on, and the values for G and B should be taken as negative.
+
+###### Bytes 2-4
+
+The next 3 bytes are just the RGB values (in that order) as unsigned 8-bit integers.
+
+###### Presets
+
+Here are the presets in my GR III, and the RGB values that show up when viewing in the camera, compared to the bytes.
+
+```text
+010a4614 = Preset 1 (R+10%, G+70%, B+20%)
+0128320a = Preset 2 (R+40%, G+50%, B+10%)
+415a140a = Preset 3 (R+90%, G+20%, B-10%)
+61780a0a = Preset 4 (R+120%, G-10%, B-10%)
+```
 
 ##### B&W Grain Effect
 
