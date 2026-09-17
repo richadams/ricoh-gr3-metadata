@@ -25,7 +25,7 @@ The `Pentax_0x0247` MakerNote field seems to be where the "Image Control" settin
   - [Cross Processing Specific Settings](#cross-processing-specific-settings)
     - [Color Tone](#color-tone)
 - [ExifTool Configuration](#exiftool-configuration)
-  - [Bonus - Recipes](#bonus---recipes)
+  - [Bonus: Recipes](#bonus-recipes)
 - [Testing Methodology](#testing-methodology)
 - [Raw Test Data](#raw-test-data)
 

@@ -8,7 +8,7 @@
 - [Why?](#why)
 - [Data Structure](#data-structure)
 - [ExifTool Configuration](#exiftool-configuration)
-  - [Bonus - Human Readable Crop Mode](#bonus---human-readable-crop-mode)
+  - [Bonus: Make It Fancier](#bonus-make-it-fancier)
 
 ---
 
