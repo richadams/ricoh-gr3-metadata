@@ -221,10 +221,10 @@ See [ExifTool_config](ExifTool_config) for the full configuration, but the gener
         GR3Saturation => {
             Require   => 'GR3ImageControlData',
             Condition => '$self->GetValue("ImageTone") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 0, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 0, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
 
@@ -233,7 +233,7 @@ See [ExifTool_config](ExifTool_config) for the full configuration, but the gener
 )
 ```
 
-### Bonus - Recipes
+### Bonus: Recipes
 
 With all of the image control settings available in `exiftool`, you can also add configurations for your recipes and have them appear as a new tag.
 
@@ -318,11 +318,11 @@ I repeated this same idea for the settings that are specific to the B&W/Monotone
 
 ### Settings Matrix
 
-Since I missed a few settings the first time around, I wanted to make sure I'd gotten all of them. I found a [post on the GR blog](https://www.grblog.jp/en/article/1976/) with a matrix of settings for the BW modes, but couldn't find anything for the rest of them. So I made a new one covering all the different modes.
+Since I missed a few settings the first time around, I wanted to make sure I'd gotten all of them. I found a [post on the GR blog](https://www.grblog.jp/en/article/1976/) with [a matrix of settings for the BW modes](https://www.grblog.jp/en/wp-content/uploads/sites/2/article/1976/BWMATRIX2.jpg) (albeit from an older firmware version, so no longer accurate), but couldn't find anything for any of the other modes. So I made myself a new one.
+
+These are all the possible Image Control settings I could find on my GR III camera, and their possible values.
 
 ![](ricoh_gr3_setting_matrix.png)
-
-These are all the possible Image Control settings I could find on my GR III camera.
 
 ---
 

@@ -1,40 +1,54 @@
-# Custom ExifTool configuration to expose the vendor-specific image control settings for a Ricoh GR III camera. Tested against ExifTool v13.55 only.
+# Custom ExifTool configuration to expose some vendor-specific settings for a Ricoh GR III camera. Tested using ExifTool v13.55 and RICOH GR III v2.10.
 
 %Image::ExifTool::UserDefined = (
+    # Extract vendor-specific fields for the Ricoh GR III
     'Image::ExifTool::Pentax::Main' => {
-        # This is where it stores the crop, 35mm/50mm, etc.
+        # This is where it stores the crop mode, 35mm/50mm, etc.
         # L=0 0 0, M=0 5 0, S=0 6 0
         0x0098 => {
             Name     => 'GR3CropMode',
             Writable => 'int8u',
             Count    => 3,
-        },
-        # This 44-byte blob is where the Image Control customizations
-        # seem to be stored. I use composite fields later to get them.
-        0x0247 => {
-            Name     => 'GR3ImageControlData',
-            Writable => 'undef',
-            Count    => 44,
-        },
-    },
 
-    'Image::ExifTool::Composite' => {
-        # Convert the 3-byte crop mode into a human readable string.
-        GR3CropModeName => {
-            Require   => 'GR3CropMode',
-            ValueConv => q{
+            # Describe it the same way the camera does.
+            PrintConv => q{
                 return 'L (28mm)' if $val eq '0 0 0';
                 return 'M (35mm)' if $val eq '0 5 0';
                 return 'S (50mm)' if $val eq '0 6 0';
                 return "Unknown ($val)";
             },
-        },
 
+            # Allow setting it by just providing S/M/L.
+            PrintConvInv => q{
+                return '0 0 0' if $val eq 'L';
+                return '0 5 0' if $val eq 'M';
+                return '0 6 0' if $val eq 'S';
+                return $val;
+            },
+        },
+        # This 44-byte blob is where the Image Control customizations
+        # seem to be stored. I use composite fields later to get each
+        # individual property from this blob.
+        0x0247 => {
+            Name     => 'GR3ImageControlData',
+            Writable => 'undef',
+            Count    => 44,
+
+            # Show this in hex so I can more easily compare to find other offsets.
+            PrintConv => q{
+                return unpack('H*', $val);
+            },
+        },
+    },
+
+    # Create a bunch of new fields based on the available data.
+    'Image::ExifTool::Composite' => {
         # Show WB adjustments like they are on the camera.
         # Instead of "WBShiftAB: -2" it will now be "A2", etc.
         GR3WBShiftABName => {
             Require   => 'WBShiftAB',
-            ValueConv => q{
+            ValueConv => '$val',
+            PrintConv => q{
                 return 'A' . abs($val) if $val < 0;
                 return 'B' . $val if $val > 0;
                 return '0';
@@ -42,7 +56,8 @@
         },
         GR3WBShiftGMName => {
             Require   => 'WBShiftGM',
-            ValueConv => q{
+            ValueConv => '$val',
+            PrintConv => q{
                 return 'G' . abs($val) if $val < 0;
                 return 'M' . $val if $val > 0;
                 return '0';
@@ -53,11 +68,11 @@
         # This just pulls it out to match the value shown on the camera.
         GR3HighlightCorrection => {
             Require   => 'DynamicRangeExpansion',
-            ValueConv => q{
-                my @v = split(' ', $val);
-                return 'On'   if $v[1] == 1;
-                return 'Auto' if $v[1] == 2;
-                return 'Off'  if $v[1] == 0;
+            ValueConv => '((split(" ", $val))[1])',
+            PrintConv => q{
+                return 'On'   if $val == 1;
+                return 'Auto' if $val == 2;
+                return 'Off'  if $val == 0;
                 return "Unknown ($val)";
             },
         },
@@ -66,83 +81,83 @@
         GR3Saturation => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne ""',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 0, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 0, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         GR3Hue => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne ""',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 2, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 2, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         # None of the rest are available for "HDR Tone".
         GR3HighLowKey => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 4, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 4, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         GR3Contrast => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 6, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 6, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         GR3ContrastHighlight => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 8, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 8, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         GR3ContrastShadow => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 10, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 10, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         GR3Sharpness => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 12, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 12, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         GR3Shading => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 18, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 18, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
         GR3Clarity => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") ne "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 20, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            ValueConv => 'unpack("s<", substr($val, 20, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
 
@@ -150,36 +165,44 @@
         GR3BWToning => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 26, 2));
-                return 'N/A'    if $v == -1;
-                return 'Off'    if $v == 0;
-                return 'Sepia'  if $v == 1;
-                return 'Red'    if $v == 2;
-                return 'Green'  if $v == 3;
-                return 'Blue'   if $v == 4;
-                return 'Purple' if $v == 5;
-                return "Unknown ($v)";
+            ValueConv => 'unpack("s<", substr($val, 26, 2))',
+            PrintConv => q{
+                return 'N/A'    if $val == -1;
+                return 'Off'    if $val == 0;
+                return 'Sepia'  if $val == 1;
+                return 'Red'    if $val == 2;
+                return 'Green'  if $val == 3;
+                return 'Blue'   if $val == 4;
+                return 'Purple' if $val == 5;
+                return "Unknown ($val)";
             },
         },
         # Note: This isn't available in "Hard BW" mode.
         GR3BWFilterEffect => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/ && ($self->GetValue("ImageTone") // "") !~ /^Hard/',
+            # I think just the raw 4 numbers makes most sense for the value representation of this.
             ValueConv => q{
                 my $flags = unpack('C', substr($val, 34, 1));
                 my $r = unpack('C', substr($val, 35, 1));
                 my $g = unpack('C', substr($val, 36, 1));
                 my $b = unpack('C', substr($val, 37, 1));
 
-                return 'Off' if $flags == 0x00;
-                return 'N/A' if $flags & 0x08;
-
                 $r = -$r if $flags & 0x10;
                 $g = -$g if $flags & 0x20;
                 $b = -$b if $flags & 0x40;
 
-                my $result = sprintf("On; R%+d%, G%+d%, B%+d%", $r, $g, $b);
+                return sprintf('%d,%d,%d,%d', $flags, $r, $g, $b);
+            },
+            # For the pretty output, make it match how the camera shows it.
+            # Oh, and include the preset number if it matches one of those, that's helpful too.
+            PrintConv => q{
+                my ($flags, $r, $g, $b) = split(',', $val);
+
+                return 'Off' if $flags == 0x00;
+                return 'N/A' if $flags & 0x08;
+
+                my $result = sprintf('On; R%+d%%, G%+d%%, B%+d%%', $r, $g, $b);
 
                 $result .= ' (Preset 1)' if $r == 10  && $g == 70 && $b == 20;
                 $result .= ' (Preset 2)' if $r == 40  && $g == 50 && $b == 10;
@@ -192,39 +215,39 @@
         GR3BWGrainEffect => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") =~ /Monotone|B&W/',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 38, 2));
-                return 'N/A' if $v == 8;
-                return 'Off' if $v == 0;
-                return '3'   if $v == 1;
-                return '2'   if $v == 3;
-                return '1'   if $v == 5;
-                return "Unknown ($v)";
+            ValueConv => 'unpack("s<", substr($val, 38, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == 8;
+                return 'Off' if $val == 0;
+                return '3'   if $val == 1;
+                return '2'   if $val == 3;
+                return '1'   if $val == 5;
+                return "Unknown ($val)";
             },
         },
 
         # This is only used in "Bleach Bypass" mode.
         GR3BleachBypassToning => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") =~ /Bleach Bypass/',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 28, 2));
-                return 'N/A'      if $v == -1;
-                return 'Off'      if $v == 0;
-                return 'C (Cold)' if $v == 1;
-                return 'W (Warm)' if $v == 2;
-                return "Unknown ($v)";
+            Condition => '($self->GetValue("ImageTone") // "") =~ /Bleach Bypass/',
+            ValueConv => 'unpack("s<", substr($val, 28, 2))',
+            PrintConv => q{
+                return 'N/A'      if $val == -1;
+                return 'Off'      if $val == 0;
+                return 'C (Cold)' if $val == 1;
+                return 'W (Warm)' if $val == 2;
+                return "Unknown ($val)";
             },
         },
 
         # This is only used in "Retro" mode.
         GR3RetroToning => {
             Require   => 'GR3ImageControlData',
-            Condition => '$self->GetValue("ImageTone") eq "Retro"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 16, 2));
-                return 'N/A' if $v == -32768;
-                return $v;
+            Condition => '($self->GetValue("ImageTone") // "") eq "Retro"',
+            ValueConv => 'unpack("s<", substr($val, 16, 2))',
+            PrintConv => q{
+                return 'N/A' if $val == -32768;
+                return $val;
             },
         },
 
@@ -232,23 +255,23 @@
         GR3HDRToneToning => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") eq "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 30, 2));
-                return 'Off' if $v == 0;
-                return 'BW'  if $v == 1;
-                return 'S'   if $v == 2;
-                return "Unknown ($v)";
+            ValueConv => 'unpack("s<", substr($val, 30, 2))',
+            PrintConv => q{
+                return 'Off' if $val == 0;
+                return 'BW'  if $val == 1;
+                return 'S'   if $val == 2;
+                return "Unknown ($val)";
             },
         },
         GR3HDRToneHDRToneLevel => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") eq "HDR Tone"',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 32, 2));
-                return 'Low'    if $v == 1;
-                return 'Med'    if $v == 2;
-                return 'High'   if $v == 3;
-                return "Unknown ($v)";
+            ValueConv => 'unpack("s<", substr($val, 32, 2))',
+            PrintConv => q{
+                return 'Low'    if $val == 1;
+                return 'Med'    if $val == 2;
+                return 'High'   if $val == 3;
+                return "Unknown ($val)";
             },
         },
 
@@ -256,13 +279,13 @@
         GR3CrossProcessingColorTone => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("ImageTone") // "") =~ /Cross Processing/',
-            ValueConv => q{
-                my $v = unpack('s<', substr($val, 42, 2));
-                return 'N/A'     if $v == -1;
-                return 'Blue'    if $v == 1;
-                return 'Magenta' if $v == 2;
-                return 'Yellow'  if $v == 3;
-                return "Unknown ($v)";
+            ValueConv => 'unpack("s<", substr($val, 42, 2))',
+            PrintConv => q{
+                return 'N/A'     if $val == -1;
+                return 'Blue'    if $val == 1;
+                return 'Magenta' if $val == 2;
+                return 'Yellow'  if $val == 3;
+                return "Unknown ($val)";
             },
         },
 

@@ -28,7 +28,7 @@ It looks like 3 unsigned 8-bit integers, where the 2nd byte is the only one that
 
 ## ExifTool Configuration
 
-Here's a custom `exiftool` configuration that will allow you to access and write to the field. See [ExifTool_config](ExifTool_config) for a more complete configuration that covers all the other settings I've found too.
+Here's a quick `exiftool` configuration that will allow you to access and write to the field. See [ExifTool_config](ExifTool_config) for a more complete configuration that covers all the other settings I've found too.
 
 ```perl
 %Image::ExifTool::UserDefined = (
@@ -44,38 +44,32 @@ Here's a custom `exiftool` configuration that will allow you to access and write
 1;
 ```
 
-### Bonus - Human Readble Crop Mode
+### Bonus: Make It Fancier
 
-If you want to get fancy, you can use this configuration to also show a human readable version of the value. That's what I've done in my larger [`exiftool` configuration](ExifTool_config).
+If you want to get fancy, you can use this updated configuration to show the value the same way the camera does.
 
 ```perl
 %Image::ExifTool::UserDefined = (
     'Image::ExifTool::Pentax::Main' => {
         0x0098 => {
-            Name     => 'GR3CropMode',
-            Writable => 'int8u',
-            Count    => 3,
-        },
-    },
-
-    'Image::ExifTool::Composite' => {
-        GR3CropModeName => {
-            Require   => 'GR3CropMode',
-            ValueConv => q{
+            Name      => 'GR3CropMode',
+            Writable  => 'int8u',
+            Count     => 3,
+            PrintConv => q{
                 return 'L (28mm)' if $val eq '0 0 0';
                 return 'M (35mm)' if $val eq '0 5 0';
                 return 'S (50mm)' if $val eq '0 6 0';
                 return "Unknown ($val)";
             },
         },
-    }
+    },
 )
 ```
 
-It'll output like this,
+It'll then output like this,
 
 ```text
-GR3 Crop Mode Name: L (28mm)
+GR3 Crop Mode: L (28mm)
 ```
 
 I find that easier when I don't want to have to remember which mode `0 5 0` was.
