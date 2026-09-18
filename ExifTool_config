@@ -269,9 +269,9 @@
             PrintConv => q{
                 return 'N/A' if $val == 8;
                 return 'Off' if $val == 0;
-                return '3'   if $val == 1;
-                return '2'   if $val == 3;
-                return '1'   if $val == 5;
+                return '3'   if $val == 1; # Strong
+                return '2'   if $val == 3; # Medium
+                return '1'   if $val == 5; # Weak
                 return "Unknown ($val)";
             },
         },

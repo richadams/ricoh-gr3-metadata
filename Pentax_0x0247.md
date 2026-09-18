@@ -144,9 +144,9 @@ This one seems to be in reverse order, and odd numbers only, except for the `N/A
 
 ```text
 0 = Off
-1 = 3
-3 = 2
-5 = 1
+1 = 3 (Strong)
+3 = 2 (Medium)
+5 = 1 (Weak)
 8 = N/A (i.e. camera isn't in a B&W/Monotone mode)
 ```
 
