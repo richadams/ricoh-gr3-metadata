@@ -339,7 +339,9 @@
             },
         },
 
-        # Identify custom recipes from the Image Tone and image control settings.
+        #######################################################################
+        # Recipes
+
         GR3Recipe => {
             Require   => 'GR3ImageControlData',
             Condition => '($self->GetValue("Model") // "") eq "RICOH GR III"',
@@ -350,9 +352,7 @@
                     unpack('s<', substr($val, $_, 2))
                 } (0, 2, 4, 6, 8, 10, 12, 18, 20));
 
-
                 ###############################################################
-                # Recipes
 
                 # https://reggiebphotography.com/blog/The-Most-Versatile-Ricoh-GR-III-GR-IIIx-Film-Simulation-Recipe-Reggies-Color-Negative
                 return 'Reggie\'s Color Negative'
@@ -367,8 +367,7 @@
 
                 # Add any more that you want...
 
-                ###############################################################
-
+                # Don't show the field if no recipe was identified.
                 return undef;
             },
         },

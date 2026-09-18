@@ -7,7 +7,7 @@
 
 - [Why?](#why)
 - [Data Structure](#data-structure)
-- [ExifTool Configuration](#exiftool-configuration)
+- [ExifTool Configuration Example](#exiftool-configuration-example)
   - [Bonus: Make It Fancier](#bonus-make-it-fancier)
 
 ---
@@ -26,7 +26,7 @@ It looks like 3 unsigned 8-bit integers, where the 2nd byte is the only one that
 0 6 0 = S (50mm)
 ```
 
-## ExifTool Configuration
+## ExifTool Configuration Example
 
 Here's a quick `exiftool` configuration that will allow you to access and write to the field. See [ExifTool_config](ExifTool_config) for a more complete configuration that covers all the other settings I've found too.
 

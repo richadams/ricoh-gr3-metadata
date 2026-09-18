@@ -8,13 +8,13 @@ If you've ever wanted to get all of the image control settings from the metadata
 
 ## tl;dr
 
-Save [`ExifTool_config`](ExifTool_config) as `~/.ExifTool_config`, then use this command to see all of the settings in the order they'd normally be shown in the camera.
+Save [`ExifTool_config`](ExifTool_config) as `~/.ExifTool_config`, then use this command to see all of the settings in the order they'd normally be shown in the camera. You can even define your recipes and have them show up too.
 
 ```bash
 exiftool -GR3 <FILE>
 ```
 
-Here's an example of what the output should look like,
+Here's an example of the output,
 
 ```text
 GR3 Crop Mode                   : L (28mm)
@@ -45,22 +45,14 @@ By having all of these fields available in `exiftool` they should also show up i
 > [!NOTE]
 > It is worth noting that I have absolutely no idea what I'm doing when it comes to ExifTool configuration files. I used the tried and true method of copy/pasting from documentation, changing some values, fixing any errors that showed up, and hoping for the best. I did discover `PrintConv` and updated everything to use that though. If you know what you are doing, don't hesitate to explain what I did wrong so I can learn. This is very much a "works on my machine" type of thing.
 
-## Recipes
-
-Recipes are a collection of "Image Control" settings that give your photos a specific look and feel. Great for when you don't want to deal with post-processing a RAW image and just want a JPEG that looks a certain way straight out of the camera.
-
-Ultimately this entire endeavor was me trying to automatically identify which recipe I may have used on previous photos without having to look at them on the camera itself.
-
-See ["Bonus: Recipes"](Pentax_0x0247.md#bonus-recipes) for information on how to add your own recipes to the [`ExifTool_config`](ExifTool_config) file I put together.
-
 ## Technical Details
 
 ### Pentax_0x0098
 
-See [`Pentax_0x0098`](Pentax_0x0098.md). This field stores the "Crop Mode" and can be used to [uncrop a photo](Uncropping.md) to get the full image back if you accidentally shot at 35mm or 50mm instead of 28mm, etc.
+See [`Pentax_0x0098`](Pentax_0x0098.md). This field stores the "Crop Mode" and can be used to [uncrop a photo](Uncropping.md) to get the full image back if you accidentally shot at 35mm or 50mm instead of 28mm, etc. Not that I would ever do such a thing.
 
 ### Pentax_0x0247
 
-See [`Pentax_0x0247`](Pentax_0x0247.md). This field stores all of the "Image Control" settings. Basically anything from the below settings matrix is encoded in the field.
+See [`Pentax_0x0247`](Pentax_0x0247.md). This field stores all of the "Image Control" settings. Basically anything from the below settings matrix is encoded in the field. You can use this information to [automatically identify the recipe that was used](Recipe%20Identification.md).
 
 ![](ricoh_gr3_setting_matrix.png)

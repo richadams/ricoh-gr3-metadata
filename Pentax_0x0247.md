@@ -24,14 +24,15 @@ The `Pentax_0x0247` MakerNote field seems to be where the "Image Control" settin
     - [HDR Tone Level](#hdr-tone-level)
   - [Cross Processing Specific Settings](#cross-processing-specific-settings)
     - [Color Tone](#color-tone)
-- [ExifTool Configuration](#exiftool-configuration)
-  - [Bonus: Recipes](#bonus-recipes)
+- [ExifTool Configuration Example](#exiftool-configuration-example)
 - [Testing Methodology](#testing-methodology)
 - [Raw Test Data](#raw-test-data)
 
 ## Why?
 
 While `exiftool` already pulls out some image adjustment values, they are the generic EXIF tags rather than the vendor-specific ones. For example, while `Saturation: High` is accurate based on the generic `0xa409` tag, I don't know whether that corresponds to `+1`, `+2`, `+3`, or `+4` on the Ricoh GR III. I want the raw camera values. There are also lots of other Ricoh-specific image control settings that don't seem to be available at all and I would like those too.
+
+Basically this entire endeavor was me trying to [automatically identify which recipe](Recipe%20Identification.md) I may have used on previous photos without having to look at them on the camera itself.
 
 ## Data Structure
 
@@ -203,7 +204,7 @@ This only shows up in the "Cross Processing 2" image control mode. It's called "
  3 = Yellow
 ```
 
-## ExifTool Configuration
+## ExifTool Configuration Example
 
 See [ExifTool_config](ExifTool_config) for the full configuration, but the general idea is to extract the image control data, and then create new composite tags for each of the settings by unpacking the relevant bytes and either passing the value back or doing a lookup.
 
@@ -232,46 +233,6 @@ See [ExifTool_config](ExifTool_config) for the full configuration, but the gener
     }
 )
 ```
-
-### Bonus: Recipes
-
-With all of the image control settings available in `exiftool`, you can also add configurations for your recipes and have them appear as a new tag.
-
-Here's an example using [Reggie's Color Negative](https://reggiebphotography.com/blog/The-Most-Versatile-Ricoh-GR-III-GR-IIIx-Film-Simulation-Recipe-Reggies-Color-Negative), where it'll now show up under a new `GR3 Recipe` tag.
-
-See [ExifTool_config](ExifTool_config) for how it all fits together.
-
-```perl
-GR3Recipe => {
-    Require   => 'GR3ImageControlData',
-    ValueConv => q{
-        my $settings = join(',', map {
-            unpack('s<', substr($val, $_, 2))
-        } (0, 2, 4, 6, 8, 10, 12, 18, 20));
-
-        return 'Reggie\'s Color Negative'
-            if $self->GetValue('ImageTone') eq 'Negative Film'
-            && $settings eq '2,0,0,3,-4,-1,1,0,0'
-            && $self->GetValue('GR3HighlightCorrection') eq 'Auto'
-            && $self->GetValue('ShadowCorrection') eq 'Normal'
-            && $self->GetValue('HighISONoiseReduction') eq 'Off; Inactive'
-            && $self->GetValue('WhiteBalance') =~ /Auto/
-            && $self->GetValue('GR3WBShiftName') eq 'A6'
-            ;
-
-        # Add more recipes here...
-
-        return undef;
-    },
-},
-```
-
-```bash
-exiftool -GR3Recipe RCN.JPG
-GR3 Recipe : Reggie's Color Negative
-```
-
-I use this to document all of my recipes and have it show up in my photo management tools. Very convenient when I'm struggling to remember what settings I used and whether it was part of a recipe or just some ad-hoc experimentation.
 
 ---
 
