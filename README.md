@@ -11,34 +11,7 @@ If you've ever wanted to get all of the image control settings from the metadata
 Save [`ExifTool_config`](ExifTool_config) as `~/.ExifTool_config`, then use this command to see all of the settings in the order they'd normally be shown in the camera.
 
 ```bash
-exiftool \
-  -GR3CropMode \
-  -WhiteBalance \
-  -GR3WBShiftName \
-  -PeripheralIlluminationCorr \
-  -GR3HighlightCorrection \
-  -ShadowCorrection \
-  -SensitivityAdjust \
-  -ImageTone \
-  -GR3Saturation \
-  -GR3Hue \
-  -GR3HighLowKey \
-  -GR3Contrast \
-  -GR3ContrastHighlight \
-  -GR3ContrastShadow \
-  -GR3Sharpness \
-  -GR3Shading \
-  -GR3Clarity \
-  -GR3BWToning \
-  -GR3BWFilterEffect \
-  -GR3BWGrainEffect \
-  -GR3BleachBypassToning \
-  -GR3RetroToning \
-  -GR3CrossProcessingColorTone \
-  -GR3HDRToneToning \
-  -GR3HDRToneHDRToneLevel \
-  -GR3Recipe \
-  <FILE>
+exiftool -GR3 <FILE>
 ```
 
 Here's an example of what the output should look like,
@@ -64,9 +37,10 @@ GR3 Clarity                     : 0
 GR3 Recipe                      : Reggie's Color Negative
 ```
 
-If you don't want the configuration to always be used when running `exiftool` commands, you can save it as another file such as `gr3.config` and then use `exiftool -config gr3.config` when you do want to use it.
-
 By having all of these fields available in `exiftool` they should also show up in any other software that uses it. For example, I have them shown in the Metadata sidebar in digiKam with a custom filter.
+
+> [!TIP]
+> If you don't want the configuration to always be used when running `exiftool` commands, you can save it as another file such as `gr3.config` and then use `exiftool -config gr3.config` when you do want to use it.
 
 > [!NOTE]
 > It is worth noting that I have absolutely no idea what I'm doing when it comes to ExifTool configuration files. I used the tried and true method of copy/pasting from documentation, changing some values, fixing any errors that showed up, and hoping for the best. I did discover `PrintConv` and updated everything to use that though. If you know what you are doing, don't hesitate to explain what I did wrong so I can learn. This is very much a "works on my machine" type of thing.
@@ -79,7 +53,7 @@ Ultimately this entire endeavor was me trying to automatically identify which re
 
 See ["Bonus: Recipes"](Pentax_0x0247.md#bonus-recipes) for information on how to add your own recipes to the [`ExifTool_config`](ExifTool_config) file I put together.
 
-## Details
+## Technical Details
 
 ### Pentax_0x0098
 

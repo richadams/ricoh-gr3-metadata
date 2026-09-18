@@ -1,5 +1,43 @@
 # Custom ExifTool configuration to expose some vendor-specific settings for a Ricoh GR III camera. Tested using ExifTool v13.55 and RICOH GR III v2.10.
 
+# Shortcut to show the fields the same way they are on the camera, in the same order.
+%Image::ExifTool::UserDefined::Shortcuts = (
+    GR3 => [
+        'GR3CropMode',
+        'WhiteBalance',
+        'GR3WBShiftName',
+        'PeripheralIlluminationCorr',
+        'GR3HighlightCorrection',
+        'ShadowCorrection',
+        'SensitivityAdjust',
+        'ImageTone',
+        'GR3Saturation',
+        'GR3Hue',
+        'GR3HighLowKey',
+        'GR3Contrast',
+        'GR3ContrastHighlight',
+        'GR3ContrastShadow',
+        'GR3Sharpness',
+        'GR3Shading',
+        'GR3Clarity',
+        'GR3BWToning',
+        'GR3BWFilterEffect',
+        'GR3BWGrainEffect',
+        'GR3BleachBypassToning',
+        'GR3RetroToning',
+        'GR3HDRToneToning',
+        'GR3HDRToneHDRToneLevel',
+        'GR3CrossProcessingColorTone',
+        'GR3Recipe',
+    ],
+
+    # Extra shortcut to show the debugging data.
+    GR3Debug => [
+        'GR3CropMode#', # The "#" shows underlying value instead of the PrintConv one.
+        'GR3ImageControlData' # I _want_ the PrintConv version for this one though.
+    ],
+);
+
 %Image::ExifTool::UserDefined = (
     # Extract vendor-specific fields for the Ricoh GR III
     'Image::ExifTool::Pentax::Main' => {
