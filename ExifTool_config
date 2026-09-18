@@ -43,6 +43,13 @@
 
     # Create a bunch of new fields based on the available data.
     'Image::ExifTool::Composite' => {
+        # This is identical to GR3CropMode, but it needs to be a composite
+        # for digiKam to see it. So er.. I'm making it one.
+        GR3CropModeName => {
+            Require   => 'GR3CropMode',
+            ValueConv => '$self->GetValue("GR3CropMode")',
+        },
+
         # Show WB adjustments like they are on the camera. The values are already
         # available in "WBShiftAB" and "WBShiftGM". I just want to show them as
         # strings like "A3", "G2A2", "M7B9", etc. just like the camera does.
