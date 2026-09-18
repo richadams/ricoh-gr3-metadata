@@ -256,8 +256,7 @@ GR3Recipe => {
             && $self->GetValue('ShadowCorrection') eq 'Normal'
             && $self->GetValue('HighISONoiseReduction') eq 'Off; Inactive'
             && $self->GetValue('WhiteBalance') =~ /Auto/
-            && $self->GetValue('GR3WBShiftABName') eq 'A6'
-            && $self->GetValue('GR3WBShiftGMName') eq '0'
+            && $self->GetValue('GR3WBShiftName') eq 'A6'
             ;
 
         # Add more recipes here...

@@ -43,29 +43,34 @@
 
     # Create a bunch of new fields based on the available data.
     'Image::ExifTool::Composite' => {
-        # Show WB adjustments like they are on the camera.
-        # Instead of "WBShiftAB: -2" it will now be "A2", etc.
-        GR3WBShiftABName => {
-            Require   => 'WBShiftAB',
-            ValueConv => '$val',
-            PrintConv => q{
-                return 'A' . abs($val) if $val < 0;
-                return 'B' . $val if $val > 0;
-                return '0';
+        # Show WB adjustments like they are on the camera. The values are already
+        # available in "WBShiftAB" and "WBShiftGM". I just want to show them as
+        # strings like "A3", "G2A2", "M7B9", etc. just like the camera does.
+        GR3WBShiftName => {
+            # We don't need both, so "Desire" instead of "Require".
+            Desire => {
+                0 => 'WBShiftGM',
+                1 => 'WBShiftAB',
             },
-        },
-        GR3WBShiftGMName => {
-            Require   => 'WBShiftGM',
-            ValueConv => '$val',
-            PrintConv => q{
-                return 'G' . abs($val) if $val > 0;
-                return 'M' . $val if $val < 0;
-                return '0';
+            # Underlying values are already in other fields, so not bothering with
+            # PrintConv for this one, just straight up creating the new value.
+            ValueConv => q{
+                my $gm = $self->GetValue('WBShiftGM');
+                my $ab = $self->GetValue('WBShiftAB');
+
+                my $result = '';
+                # For GM, G is +ve, for AB, B is +ve ಠ_ಠ
+                $result .= 'G' . $gm      if $gm > 0;
+                $result .= 'M' . abs($gm) if $gm < 0;
+                $result .= 'A' . abs($ab) if $ab < 0;
+                $result .= 'B' . $ab      if $ab > 0;
+
+                return $result || undef;
             },
         },
 
         # Highlight correction is encoded as part of DynamicRangeExpansion.
-        # This just pulls it out to match the value shown on the camera.
+        # This pulls it out as a new field to match the value shown on the camera.
         GR3HighlightCorrection => {
             Require   => 'DynamicRangeExpansion',
             ValueConv => '((split(" ", $val))[1])',
@@ -312,8 +317,7 @@
                     && $self->GetValue('ShadowCorrection') eq 'Normal'
                     && $self->GetValue('HighISONoiseReduction') eq 'Off; Inactive'
                     && $self->GetValue('WhiteBalance') =~ /Auto/
-                    && $self->GetValue('GR3WBShiftABName') eq 'A6'
-                    && $self->GetValue('GR3WBShiftGMName') eq '0'
+                    && $self->GetValue('GR3WBShiftName') eq 'A6'
                     ;
 
                 # Add any more that you want...

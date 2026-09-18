@@ -14,8 +14,7 @@ Save [`ExifTool_config`](ExifTool_config) as `~/.ExifTool_config`, then use this
 exiftool \
   -GR3CropMode \
   -WhiteBalance \
-  -GR3WBShiftABName \
-  -GR3WBShiftGMName \
+  -GR3WBShiftName \
   -PeripheralIlluminationCorr \
   -GR3HighlightCorrection \
   -ShadowCorrection \
@@ -47,8 +46,7 @@ Here's an example of what the output should look like,
 ```text
 GR3 Crop Mode                   : L (28mm)
 White Balance                   : Multi Auto
-GR3 WB Shift AB Name            : A6
-GR3 WB Shift GM Name            : 0
+GR3 WB Shift Name               : A6
 Peripheral Illumination Corr    : On
 GR3 Highlight Correction        : Auto
 Shadow Correction               : Normal
