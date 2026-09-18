@@ -58,8 +58,8 @@
             Require   => 'WBShiftGM',
             ValueConv => '$val',
             PrintConv => q{
-                return 'G' . abs($val) if $val < 0;
-                return 'M' . $val if $val > 0;
+                return 'G' . abs($val) if $val > 0;
+                return 'M' . $val if $val < 0;
                 return '0';
             },
         },
