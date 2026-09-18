@@ -2,7 +2,7 @@
 
 Recipes are a collection of "Image Control" settings that give your photos a specific look and feel. Great for when you don't want to deal with post-processing a RAW image and just want a JPEG that looks a certain way straight out of the camera.
 
-One of the benefits of decoding the [`Pentax_0x0247`](Pentax_0x0247.md) tag is that you can also now define your recipes and have the name show up as a new tag.
+One of the benefits of decoding the [`Pentax_0x0247`](Pentax_0x0247.md) tag is that you can also now define your recipes and have the name show up as a new composite tag.
 
 See the [`ExifTool_config`](ExifTool_config) file for how everything fits together. There's an example at the end defining the [Reggie's Color Negative](https://reggiebphotography.com/blog/The-Most-Versatile-Ricoh-GR-III-GR-IIIx-Film-Simulation-Recipe-Reggies-Color-Negative) recipe as a starting point.
 

@@ -51,7 +51,8 @@ Offset   Size   Field                         Encoding
 16       2      Retro Toning                  int16s LE
 18       2      Shading                       int16s LE
 20       2      Clarity                       int16s LE
-22       4      !! Unknown                    -
+22       2      !! Unknown                    -
+24       2      !! Unknown                    -
 26       2      BW Toning                     int16s LE
 28       2      Bleach Bypass Toning          int16s LE
 30       2      HDR Tone Toning               int16s LE
@@ -80,6 +81,8 @@ One exception is `-32768` for when the value isn't used, such as in "HDR Tone" m
 There are 3 settings which only show up in B&W/Monotone modes. Unlike the normal contrast/saturation-style fields, these aren't exposed as numeric values on the camera and instead have a mapping. Cycling through all of the options got me these values.
 
 #### B&W Toning
+
+The camera only shows coloured dots. I originally had "Sepia" as "Brown" here but got the proper terminology from [a blog post on the official GR blog](https://www.grblog.jp/en/article/1976/).
 
 ```text
 -1 = N/A (i.e. camera isn't in a B&W/Monotone mode)
@@ -150,13 +153,13 @@ This one seems to be in reverse order, and odd numbers only, except for the `N/A
 8 = N/A (i.e. camera isn't in a B&W/Monotone mode)
 ```
 
+Terminology wise, the camera displays the value as 1, 2, or 3 in playback mode, but the [firmware release notes for v1.20](https://www.ricoh-imaging.co.jp/english/products/gr-3/firmup/#update_120) describe them as "Weak", "Medium", and "Strong".
+
 ### Bleach Bypass Specific Settings
 
 #### Toning
 
 This only shows up in the "Bleach Bypass 2" image control mode. It's just called "Bleach Bypass" on my camera though.
-
-The values on the camera are "C" and "W" with coloured dots showing blue and red, so presumably the values mean "Cold" and "Warm".
 
 ```text
 -1 = N/A (i.e. camera isn't in Bleach Bypass mode)
@@ -164,6 +167,8 @@ The values on the camera are "C" and "W" with coloured dots showing blue and red
  1 = C
  2 = W
 ```
+
+The values on the camera are "C" and "W" with coloured dots showing blue and red, so presumably they mean "Cold" and "Warm". Other Ricoh cameras like the [CX6 call them Cold/Warm too](https://www.ricoh-imaging.co.jp/english/r_dc/support/faq/bp/cx6/edc06206.html).
 
 ### Retro Specific Settings
 
@@ -173,7 +178,7 @@ This only shows up in the "Retro" mode, and is a normal -4 to +4 value range lik
 
 ### HDR Tone Specific Settings
 
-These 2 settings are only available in the "HDR Tone" mode. All the normal saturation/contrast-style settings also become unavailable in this mode.
+These 2 settings are only available in the "HDR Tone" mode. Most of the normal sharpness/contrast-style settings also become unavailable in this mode, with only Saturation and Hue remaining.
 
 #### Toning
 
@@ -182,6 +187,8 @@ These 2 settings are only available in the "HDR Tone" mode. All the normal satur
 1 = BW
 2 = S
 ```
+
+As you would expect, "BW" means "B&W", and "S" means "Sepia", as seen in this [official GR blog post](https://www.grblog.jp/en/article/4652/).
 
 #### HDR Tone Level
 
@@ -278,7 +285,7 @@ I repeated this same idea for the settings that are specific to the B&W/Monotone
 
 ### Settings Matrix
 
-Since I missed a few settings the first time around, I wanted to make sure I'd gotten all of them. I found a [post on the GR blog](https://www.grblog.jp/en/article/1976/) with [a matrix of settings for the BW modes](https://www.grblog.jp/en/wp-content/uploads/sites/2/article/1976/BWMATRIX2.jpg) (albeit from an older firmware version, so no longer accurate), but couldn't find anything for any of the other modes. So I made myself a new one.
+Since I missed a few settings the first time around, I wanted to make sure I'd gotten all of them. I found a [post on the official GR blog](https://www.grblog.jp/en/article/1976/) with [a matrix of settings for the BW modes](https://www.grblog.jp/en/wp-content/uploads/sites/2/article/1976/BWMATRIX2.jpg) (albeit from an older firmware version, so no longer accurate), but couldn't find anything for any of the other modes. So I made myself a new one.
 
 These are all the possible Image Control settings I could find on my GR III camera, and their possible values.
 
