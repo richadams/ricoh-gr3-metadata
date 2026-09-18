@@ -9,6 +9,7 @@
 - [Data Structure](#data-structure)
 - [ExifTool Configuration Example](#exiftool-configuration-example)
   - [Bonus: Make It Fancier](#bonus-make-it-fancier)
+- [GR IIIx and IV](#gr-iiix-and-iv)
 
 ---
 
@@ -73,3 +74,24 @@ GR3 Crop Mode: L (28mm)
 ```
 
 I find that easier when I don't want to have to remember which mode `0 5 0` was.
+
+---
+
+## GR IIIx and IV
+
+I don't have these camera models in order to test, but Ricoh very handily provide example JPEGs for both the [III/IIIx](https://www.ricoh-imaging.co.jp/english/products/gr-3/ex/) and [IV](https://www.ricoh-imaging.co.jp/english/products/gr-4/ex/).
+
+The examples for the GR IIIx don't have any crop added, but two of the GR IV photos do have a crop applied. They describe photo #3 as having a `35mm` crop, and photo #6 has having a `50mm` crop. The tag values correspond exactly to how they were on my GR III.
+
+```
+======== ex-pic02.jpg
+GR3 Crop Mode                   : 0 0 0
+======== ex-pic03.jpg
+GR3 Crop Mode                   : 0 5 0
+======== ex-pic06.jpg
+GR3 Crop Mode                   : 0 6 0
+```
+
+So based on this limited sample, it seems the tag works the same way on the IV.
+
+I searched other places for IIIx sample photos, but pretty much all of them have the metadata stripped. Any I did find just had `0 0 0` as the value.

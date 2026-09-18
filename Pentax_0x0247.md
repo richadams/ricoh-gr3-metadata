@@ -27,6 +27,7 @@ The `Pentax_0x0247` MakerNote field seems to be where the "Image Control" settin
 - [ExifTool Configuration Example](#exiftool-configuration-example)
 - [Testing Methodology](#testing-methodology)
 - [Raw Test Data](#raw-test-data)
+- [GR IIIx and IV](#gr-iiix-and-iv)
 
 ## Why?
 
@@ -440,3 +441,15 @@ A.JPG: 00000000000000000000000000000080008000000000ffffffffffffffffffffffff08000
 B.JPG: 00000000000000000000000000000080008000000000ffffffffffffffffffffffff08000000080000000200
 C.JPG: 00000000000000000000000000000080008000000000ffffffffffffffffffffffff08000000080000000300
 ```
+
+---
+
+## GR IIIx and IV
+
+I don't have these camera models in order to test, but Ricoh very handily provide example JPEGs for both the [III/IIIx](https://www.ricoh-imaging.co.jp/english/products/gr-3/ex/) and [IV](https://www.ricoh-imaging.co.jp/english/products/gr-4/ex/).
+
+I don't know the original values in order to verify the mappings, so the best I can say is that the values at least seem to decode into something reasonable.
+
+The only clearly incorrect value I saw was for the GR IV sample photo #2 where it has a "Grain Effect" of `01 03`, which would be`769` if it's an LE int16 like the others. Since I have no idea what the camera was set to when the photo was taken, I have no way to map it back to anything useful. It could also be that it's an int8 and not an int16, so the `03` is for something else.
+
+For the most part, it at least seems like the general structure is the same for the IIIx and IV. But since the IV has some extra modes, there are likely some other settings which won't map back to anything I've found here.
