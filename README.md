@@ -53,6 +53,6 @@ See [`Pentax_0x0098`](Pentax_0x0098.md). This field stores the "Crop Mode" and c
 
 ### Pentax_0x0247
 
-See [`Pentax_0x0247`](Pentax_0x0247.md). This field stores all of the "Image Control" settings. Basically anything from the below settings matrix is encoded in the field. You can use this information to [automatically identify the recipe that was used](Recipe%20Identification.md).
+See [`Pentax_0x0247`](Pentax_0x0247.md). This field stores all of the "Image Control" settings. Everything from the below settings matrix is encoded in the field. You can use this information to [automatically identify the recipe that was used](Recipe%20Identification.md).
 
 ![](ricoh_gr3_setting_matrix.png)

@@ -1,4 +1,4 @@
-# Pentax 0x0247
+# Pentax 0x0098
 
 > [!NOTE]
 > Tested only with a Ricoh GR III on firmware v2.10. These were derived by changing camera settings and comparing the metadata. I have no idea if other models will interpret the information differently, so further experimentation may be required for your own camera.
